@@ -43,3 +43,7 @@
 - Barrier Motor Controller
 
 ## جریان داده
+
+###فایل ها 
+
+component _diagram.png
