@@ -1,1 +1,85 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam sequence {
+  ActorBackgroundColor #0F2744
+  ActorFontColor #FFFFFF
+  ActorBorderColor #0F2744
+  ParticipantBackgroundColor #EDE9FE
+  ParticipantBorderColor #7C3AED
+  ParticipantFontColor #0F2744
+  LifeLineBorderColor #94A3B8
+  ArrowColor #0F2744
+}
 
+title Sequence Diagram 2 — Grant Access Permission\n(US-11: Grant Access, US-12: Set Time Range, US-13: Set Direction)
+
+actor "Admin" as ADM
+participant "PermissionController\n(Presentation)" as PC
+participant "AccessPermissionService\n(Business Logic)" as APS
+participant "VehicleRepository\n(Data Access)" as VR
+participant "BarrierRepository\n(Data Access)" as BR
+participant "PermissionRepository\n(Data Access)" as PR
+database "Database\n(SQLite)" as DB
+
+ADM -> PC : openGrantPermissionForm()
+activate PC
+
+PC -> VR : findActive()
+activate VR
+VR -> DB : SELECT * FROM vehicle WHERE is_active=1
+activate DB
+DB --> VR : List<Vehicle>
+deactivate DB
+VR --> PC : vehicleList
+deactivate VR
+
+PC -> BR : findActive()
+activate BR
+BR -> DB : SELECT * FROM barrier WHERE status='ACTIVE'
+activate DB
+DB --> BR : List<Barrier>
+deactivate DB
+BR --> PC : barrierList
+deactivate BR
+
+PC --> ADM : displayForm(vehicleList, barrierList)
+deactivate PC
+
+ADM -> PC : submitForm(vehicle_id, barrier_id, access_type, valid_from, valid_until, time_from, time_until)
+activate PC
+
+PC -> APS : grantPermission(vehicle_id, barrier_id, access_type, valid_from, valid_until, time_from, time_until)
+activate APS
+
+APS -> PR : findActive(vehicle_id, barrier_id)
+activate PR
+PR -> DB : SELECT * FROM access_permission\nWHERE vehicle_id=? AND barrier_id=? AND is_active=1
+activate DB
+DB --> PR : existingPerm or null
+deactivate DB
+PR --> APS : existingPerm or null
+deactivate PR
+
+alt Permission already exists
+  APS --> PC : Error("Permission already exists for this vehicle-barrier")
+  PC --> ADM : showWarning("Permission already exists")
+else No existing permission
+  APS -> PR : save(newPermission)
+  activate PR
+  PR -> DB : INSERT INTO access_permission\n(vehicle_id, barrier_id, access_type,\nvalid_from, valid_until, time_from, time_until)
+  activate DB
+  DB --> PR : permission_id = NEW_ID
+  deactivate DB
+  PR --> APS : savedPermission
+  deactivate PR
+  APS --> PC : savedPermission
+  deactivate APS
+  PC --> ADM : showSuccess("Permission granted successfully")
+  deactivate PC
+end
+
+@enduml
