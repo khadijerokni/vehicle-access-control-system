@@ -1,1 +1,77 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam sequence {
+  ActorBackgroundColor #0F2744
+  ActorFontColor #FFFFFF
+  ActorBorderColor #0F2744
+  ParticipantBackgroundColor #DBEAFE
+  ParticipantBorderColor #2563EB
+  ParticipantFontColor #0F2744
+  LifeLineBorderColor #94A3B8
+  ArrowColor #0F2744
+  BoxBackgroundColor #F1F5F9
+  BoxBorderColor #E2E8F0
+}
 
+title Sequence Diagram 1 — Register Vehicle\n(US-01: Define Vehicle, US-05: Register Owner)
+
+actor "Admin" as ADM
+participant "VehicleController\n(Presentation)" as VC
+participant "VehicleService\n(Business Logic)" as VS
+participant "OwnerRepository\n(Data Access)" as OR
+participant "VehicleRepository\n(Data Access)" as VR
+database "Database\n(SQLite)" as DB
+
+ADM -> VC : openAddVehicleForm()
+activate VC
+
+VC -> OR : findAll()
+activate OR
+OR -> DB : SELECT * FROM owner WHERE is_active=1
+activate DB
+DB --> OR : List<Owner>
+deactivate DB
+OR --> VC : ownerList
+deactivate OR
+
+VC --> ADM : displayForm(ownerList)
+deactivate VC
+
+ADM -> VC : submitForm(plate, owner_id, brand, model, color, type)
+activate VC
+
+VC -> VS : registerVehicle(plate, owner_id, brand, model, color, type)
+activate VS
+
+VS -> VR : findByPlate(plate)
+activate VR
+VR -> DB : SELECT * FROM vehicle WHERE plate_number = ?
+activate DB
+DB --> VR : null (not found)
+deactivate DB
+VR --> VS : null
+deactivate VR
+
+alt Plate already exists
+  VS --> VC : Error("Plate already registered")
+  VC --> ADM : showError("Plate already registered")
+else Plate is new
+  VS -> VR : save(newVehicle)
+  activate VR
+  VR -> DB : INSERT INTO vehicle(owner_id, plate_number, brand, model, color, vehicle_type)
+  activate DB
+  DB --> VR : vehicle_id = NEW_ID
+  deactivate DB
+  VR --> VS : savedVehicle
+  deactivate VR
+  VS --> VC : savedVehicle
+  deactivate VS
+  VC --> ADM : showSuccess("Vehicle registered successfully")
+  deactivate VC
+end
+
+@enduml
