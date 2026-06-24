@@ -66,8 +66,9 @@
 | Product Backlog | diagrams/backlog/ |
 
 ---
+|## 💻 نمونه نرم‌افزار
 
-## 💻 نمونه نرم‌افزار
+🔗 **[اینجا کلیک کنید — نمونه نرم‌افزار آنلاین](https://khadijerokni.github.io/vehicle-access-control-system/software/VACS.html)**
 
 فایل `software/VACS.html` را در مرورگر باز کنید.
 هیچ نصبی لازم نیست.
