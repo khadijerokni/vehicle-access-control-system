@@ -1,13 +1,7 @@
-# نمونه نرم‌افزار | Software Prototype
+## 🔗 لینک آنلاین
 
-## VACS — Vehicle Access Control System v1.0
+**[اینجا کلیک کنید](https://khadijerokni.github.io/vehicle-access-control-system/software/VACS.html)**
 
-## نحوه اجرا
-
-۱. فایل `VACS.html` را دانلود کنید
-۲. روی فایل دابل‌کلیک کنید
-۳. در مرورگر باز می‌شود
-۴. هیچ نصبی لازم نیست
 
 ## حساب‌های دمو
 
@@ -16,7 +10,6 @@
 | Admin | admin | admin123 |
 | Guard | guard1 | guard123 |
 
-## صفحات سیستم
 
 | صفحه | عملکرد |
 |------|--------|
