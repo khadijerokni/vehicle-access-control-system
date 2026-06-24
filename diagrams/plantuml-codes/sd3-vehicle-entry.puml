@@ -1,1 +1,110 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam sequence {
+  ActorBackgroundColor #0F2744
+  ActorFontColor #FFFFFF
+  ActorBorderColor #0F2744
+  ParticipantBackgroundColor #FEE2E2
+  ParticipantBorderColor #DC2626
+  ParticipantFontColor #0F2744
+  LifeLineBorderColor #94A3B8
+  ArrowColor #0F2744
+}
 
+title Sequence Diagram 3 — Vehicle Entry Process\n(US-16: Detect Plate, US-17: Open Barrier, US-18: Log Event, US-19: Deny Unauthorized)
+
+actor "Driver" as DRV
+participant "Camera\n(Plate Reader)" as CAM
+participant "AccessControlController\n(Presentation)" as ACC
+participant "AccessControlEngine\n(Business Logic)" as ACE
+participant "VehicleRepository\n(Data Access)" as VR
+participant "PermissionRepository\n(Data Access)" as PR
+participant "LogRepository\n(Data Access)" as LR
+participant "BarrierController\n(Hardware)" as BC
+database "Database\n(SQLite)" as DB
+
+DRV -> CAM : arrive at barrier
+activate CAM
+CAM -> CAM : captureImage()
+CAM -> ACC : detectPlate(image, barrier_id)
+activate ACC
+ACC -> ACE : processAccess(plate, barrier_id, "IN")
+activate ACE
+
+ACE -> VR : findByPlate(plate)
+activate VR
+VR -> DB : SELECT * FROM vehicle\nWHERE plate_number=? AND is_active=1
+activate DB
+DB --> VR : vehicle or null
+deactivate DB
+VR --> ACE : vehicle or null
+deactivate VR
+
+alt Vehicle NOT found in system
+  ACE -> LR : save(log: plate, DENIED, "Vehicle not registered")
+  activate LR
+  LR -> DB : INSERT INTO access_log\n(barrier_id, detected_plate,\naccess_status='DENIED', deny_reason)
+  activate DB
+  DB --> LR : log_id
+  deactivate DB
+  LR --> ACE : savedLog
+  deactivate LR
+  ACE -> BC : keepClosed(barrier_id)
+  BC --> DRV : ❌ ACCESS DENIED
+  ACE --> ACC : AccessResult(DENIED)
+  ACC --> CAM : done
+  deactivate ACE
+  deactivate ACC
+  deactivate CAM
+
+else Vehicle found and active
+  ACE -> PR : findActive(vehicle_id, barrier_id, "IN", now)
+  activate PR
+  PR -> DB : SELECT * FROM access_permission\nWHERE vehicle_id=? AND barrier_id=?\nAND is_active=1\nAND valid_from<=today AND valid_until>=today\nAND time_from<=now AND time_until>=now\nAND (access_type='IN' OR access_type='BOTH')
+  activate DB
+  DB --> PR : permission or null
+  deactivate DB
+  PR --> ACE : permission or null
+  deactivate PR
+
+  alt No valid permission
+    ACE -> LR : save(log: plate, DENIED, "No valid permission")
+    activate LR
+    LR -> DB : INSERT INTO access_log\n(vehicle_id, barrier_id, detected_plate,\naccess_status='DENIED', deny_reason)
+    activate DB
+    DB --> LR : log_id
+    deactivate DB
+    LR --> ACE : savedLog
+    deactivate LR
+    ACE -> BC : keepClosed(barrier_id)
+    BC --> DRV : ❌ ACCESS DENIED
+    ACE --> ACC : AccessResult(DENIED)
+
+  else Valid permission found
+    ACE -> LR : save(log: plate, GRANTED, null)
+    activate LR
+    LR -> DB : INSERT INTO access_log\n(vehicle_id, barrier_id, permission_id,\ndetected_plate, event_type='IN',\naccess_status='GRANTED')
+    activate DB
+    DB --> LR : log_id
+    deactivate DB
+    LR --> ACE : savedLog
+    deactivate LR
+    ACE -> BC : openBarrier(barrier_id)
+    activate BC
+    BC --> DRV : ✅ ACCESS GRANTED
+    BC -> BC : wait(5 seconds)
+    BC -> BC : closeBarrier()
+    deactivate BC
+    ACE --> ACC : AccessResult(GRANTED)
+    deactivate ACE
+    ACC --> CAM : done
+    deactivate ACC
+    deactivate CAM
+  end
+end
+
+@enduml
