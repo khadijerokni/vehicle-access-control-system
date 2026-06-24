@@ -2,6 +2,7 @@
 
 **[اینجا کلیک کنید](https://khadijerokni.github.io/vehicle-access-control-system/software/VACS.html)**
 
+** یا می توانید فایل VACS.html را ابتدا دانلود کرده و‌ در Chrome یا Firefox باز کنید .**
 
 ## حساب‌های دمو
 
