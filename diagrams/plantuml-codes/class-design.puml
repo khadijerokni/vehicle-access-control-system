@@ -1,1 +1,392 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam classBackgroundColor #F8FAFF
+skinparam classBorderColor #334155
+skinparam classHeaderBackgroundColor #0F2744
+skinparam classFontColor #FFFFFF
+skinparam classHeaderFontColor #FFFFFF
+skinparam packageBackgroundColor #F1F5F9
+skinparam packageBorderColor #94A3B8
+skinparam arrowColor #334155
+skinparam stereotypeCBackgroundColor #DBEAFE
 
+title Class Diagram — Design Phase\nVehicle Access Control System (3-Tier Architecture)
+
+' ═══════════════════════════════════════
+' DOMAIN MODELS
+' ═══════════════════════════════════════
+
+package "Domain Models" #FDE8E8 {
+
+  class Owner {
+    - owner_id : int
+    - first_name : String
+    - last_name : String
+    - national_id : String
+    - phone_number : String
+    - department : String
+    - personnel_code : String
+    - is_active : boolean
+  }
+
+  class Vehicle {
+    - vehicle_id : int
+    - plate_number : String
+    - brand : String
+    - model : String
+    - color : String
+    - vehicle_type : String
+    - is_active : boolean
+    - registration_date : String
+  }
+
+  class Barrier {
+    - barrier_id : int
+    - barrier_name : String
+    - location : String
+    - direction : String
+    - status : String
+    - install_date : String
+  }
+
+  class Camera {
+    - camera_id : int
+    - ip_address : String
+    - model : String
+    - status : String
+  }
+
+  class AccessPermission {
+    - permission_id : int
+    - access_type : String
+    - valid_from : String
+    - valid_until : String
+    - time_from : String
+    - time_until : String
+    - is_active : boolean
+  }
+
+  class AccessLog {
+    - log_id : int
+    - event_type : String
+    - event_datetime : String
+    - detected_plate : String
+    - plate_image_path : String
+    - access_status : String
+    - deny_reason : String
+  }
+
+  class Operator {
+    - operator_id : int
+    - username : String
+    - password_hash : String
+    - full_name : String
+    - role : String
+    - is_active : boolean
+  }
+
+  class AccessResult {
+    + status : String
+    + plate : String
+    + barrier_id : int
+    + reason : String
+    + timestamp : String
+  }
+}
+
+' ═══════════════════════════════════════
+' DATA ACCESS LAYER
+' ═══════════════════════════════════════
+
+package "Data Access Layer" #EAFAF1 {
+
+  interface IRepository {
+    + findById(id : int) : Object
+    + findAll() : List
+    + save(entity : Object) : Object
+    + update(entity : Object) : Object
+    + delete(id : int) : void
+  }
+
+  class OwnerRepository {
+    + findById(id : int) : Owner
+    + findAll() : List
+    + save(owner : Owner) : Owner
+    + update(owner : Owner) : Owner
+    + delete(id : int) : void
+    + findByNationalId(nid : String) : Owner
+  }
+
+  class VehicleRepository {
+    + findById(id : int) : Vehicle
+    + findAll() : List
+    + save(vehicle : Vehicle) : Vehicle
+    + update(vehicle : Vehicle) : Vehicle
+    + delete(id : int) : void
+    + findByPlate(plate : String) : Vehicle
+    + findByOwner(owner_id : int) : List
+    + findActive() : List
+  }
+
+  class BarrierRepository {
+    + findById(id : int) : Barrier
+    + findAll() : List
+    + save(barrier : Barrier) : Barrier
+    + update(barrier : Barrier) : Barrier
+    + delete(id : int) : void
+    + findActive() : List
+  }
+
+  class CameraRepository {
+    + findById(id : int) : Camera
+    + findAll() : List
+    + save(camera : Camera) : Camera
+    + update(camera : Camera) : Camera
+    + delete(id : int) : void
+    + findByBarrier(barrier_id : int) : List
+  }
+
+  class PermissionRepository {
+    + findById(id : int) : AccessPermission
+    + findAll() : List
+    + save(perm : AccessPermission) : AccessPermission
+    + update(perm : AccessPermission) : AccessPermission
+    + delete(id : int) : void
+    + findActive(vehicle_id : int, barrier_id : int) : AccessPermission
+    + findByVehicle(vehicle_id : int) : List
+  }
+
+  class LogRepository {
+    + findById(id : int) : AccessLog
+    + findAll() : List
+    + save(log : AccessLog) : AccessLog
+    + update(log : AccessLog) : AccessLog
+    + delete(id : int) : void
+    + findByFilters(plate : String, barrier_id : int, status : String) : List
+    + findRecent(limit : int) : List
+  }
+
+  class OperatorRepository {
+    + findById(id : int) : Operator
+    + findAll() : List
+    + save(op : Operator) : Operator
+    + update(op : Operator) : Operator
+    + delete(id : int) : void
+    + findByUsername(username : String) : Operator
+  }
+}
+
+' ═══════════════════════════════════════
+' BUSINESS LOGIC LAYER
+' ═══════════════════════════════════════
+
+package "Business Logic Layer" #FEF9E7 {
+
+  class AuthService {
+    - operatorRepo : OperatorRepository
+    + login(username : String, password : String) : Operator
+    + logout() : void
+    + authorize(operator : Operator, action : String) : boolean
+    + hashPassword(password : String) : String
+  }
+
+  class VehicleService {
+    - vehicleRepo : VehicleRepository
+    - ownerRepo : OwnerRepository
+    + registerVehicle(plate : String, owner_id : int, brand : String, model : String, color : String, type : String) : Vehicle
+    + updateVehicle(id : int, data : Object) : Vehicle
+    + activateVehicle(id : int) : void
+    + deactivateVehicle(id : int) : void
+    + getAllVehicles() : List
+    + getVehicleById(id : int) : Vehicle
+  }
+
+  class OwnerService {
+    - ownerRepo : OwnerRepository
+    + registerOwner(firstName : String, lastName : String, nationalId : String, phone : String, department : String, code : String) : Owner
+    + updateOwner(id : int, data : Object) : Owner
+    + deactivateOwner(id : int) : void
+    + getAllOwners() : List
+  }
+
+  class BarrierService {
+    - barrierRepo : BarrierRepository
+    - cameraRepo : CameraRepository
+    + registerBarrier(name : String, location : String, direction : String) : Barrier
+    + updateBarrier(id : int, data : Object) : Barrier
+    + activateBarrier(id : int) : void
+    + deactivateBarrier(id : int) : void
+    + getAllBarriers() : List
+    + assignCamera(barrier_id : int, ip : String, model : String) : Camera
+  }
+
+  class AccessPermissionService {
+    - permissionRepo : PermissionRepository
+    - vehicleRepo : VehicleRepository
+    - barrierRepo : BarrierRepository
+    + grantPermission(vehicle_id : int, barrier_id : int, type : String, from : String, until : String, tFrom : String, tUntil : String) : AccessPermission
+    + revokePermission(id : int) : void
+    + restorePermission(id : int) : void
+    + getAllPermissions() : List
+    + getPermissionsByVehicle(vehicle_id : int) : List
+  }
+
+  class AccessControlEngine {
+    - vehicleRepo : VehicleRepository
+    - permissionRepo : PermissionRepository
+    - logRepo : LogRepository
+    + processAccess(plate : String, barrier_id : int, event_type : String) : AccessResult
+    - findVehicle(plate : String) : Vehicle
+    - findValidPermission(vehicle_id : int, barrier_id : int, type : String) : AccessPermission
+    - validateTimeWindow(perm : AccessPermission) : boolean
+    - validateDateRange(perm : AccessPermission) : boolean
+    - createLog(vehicle_id : int, barrier_id : int, perm_id : int, plate : String, type : String, status : String, reason : String) : AccessLog
+    - openBarrier(barrier_id : int) : void
+  }
+
+  class ReportService {
+    - logRepo : LogRepository
+    - barrierRepo : BarrierRepository
+    - vehicleRepo : VehicleRepository
+    + getDashboardStats() : Object
+    + getAccessLogs(plate : String, barrier_id : int, status : String, event_type : String) : List
+    + getLogsByBarrier() : Object
+    + getGrantDenyStats() : Object
+    + exportCSV() : String
+  }
+}
+
+' ═══════════════════════════════════════
+' PRESENTATION LAYER
+' ═══════════════════════════════════════
+
+package "Presentation Layer" #DBEAFE {
+
+  class DashboardController {
+    - vehicleService : VehicleService
+    - barrierService : BarrierService
+    - reportService : ReportService
+    + showDashboard() : void
+    + renderStats() : void
+    + renderRecentLogs() : void
+  }
+
+  class VehicleController {
+    - vehicleService : VehicleService
+    - ownerService : OwnerService
+    + listVehicles() : void
+    + addVehicle() : void
+    + editVehicle(id : int) : void
+    + toggleVehicle(id : int) : void
+  }
+
+  class BarrierController {
+    - barrierService : BarrierService
+    + listBarriers() : void
+    + addBarrier() : void
+    + editBarrier(id : int) : void
+    + toggleBarrier(id : int) : void
+    + listCameras() : void
+    + addCamera() : void
+  }
+
+  class PermissionController {
+    - permissionService : AccessPermissionService
+    + listPermissions() : void
+    + grantPermission() : void
+    + revokePermission(id : int) : void
+    + restorePermission(id : int) : void
+  }
+
+  class AccessControlController {
+    - accessEngine : AccessControlEngine
+    + showSimulate() : void
+    + checkAccess(plate : String, barrier_id : int, type : String) : void
+  }
+
+  class LogController {
+    - reportService : ReportService
+    + listLogs() : void
+    + filterLogs(plate : String, barrier_id : int, status : String) : void
+    + showReport() : void
+    + exportCSV() : void
+  }
+
+  class AuthController {
+    - authService : AuthService
+    + showLogin() : void
+    + login(username : String, password : String) : void
+    + logout() : void
+  }
+}
+
+' ═══════════════════════════════════════
+' RELATIONSHIPS — Data Layer
+' ═══════════════════════════════════════
+
+OwnerRepository ..|> IRepository
+VehicleRepository ..|> IRepository
+BarrierRepository ..|> IRepository
+CameraRepository ..|> IRepository
+PermissionRepository ..|> IRepository
+LogRepository ..|> IRepository
+OperatorRepository ..|> IRepository
+
+OwnerRepository ..> Owner : returns
+VehicleRepository ..> Vehicle : returns
+BarrierRepository ..> Barrier : returns
+CameraRepository ..> Camera : returns
+PermissionRepository ..> AccessPermission : returns
+LogRepository ..> AccessLog : returns
+OperatorRepository ..> Operator : returns
+
+' ═══════════════════════════════════════
+' RELATIONSHIPS — Business → Data
+' ═══════════════════════════════════════
+
+AuthService --> OperatorRepository : uses
+VehicleService --> VehicleRepository : uses
+VehicleService --> OwnerRepository : uses
+OwnerService --> OwnerRepository : uses
+BarrierService --> BarrierRepository : uses
+BarrierService --> CameraRepository : uses
+AccessPermissionService --> PermissionRepository : uses
+AccessPermissionService --> VehicleRepository : uses
+AccessPermissionService --> BarrierRepository : uses
+AccessControlEngine --> VehicleRepository : uses
+AccessControlEngine --> PermissionRepository : uses
+AccessControlEngine --> LogRepository : uses
+AccessControlEngine ..> AccessResult : creates
+ReportService --> LogRepository : uses
+ReportService --> BarrierRepository : uses
+ReportService --> VehicleRepository : uses
+
+' ═══════════════════════════════════════
+' RELATIONSHIPS — Presentation → Business
+' ═══════════════════════════════════════
+
+DashboardController --> VehicleService : uses
+DashboardController --> BarrierService : uses
+DashboardController --> ReportService : uses
+VehicleController --> VehicleService : uses
+VehicleController --> OwnerService : uses
+BarrierController --> BarrierService : uses
+PermissionController --> AccessPermissionService : uses
+AccessControlController --> AccessControlEngine : uses
+LogController --> ReportService : uses
+AuthController --> AuthService : uses
+
+' ═══════════════════════════════════════
+' DOMAIN RELATIONSHIPS
+' ═══════════════════════════════════════
+
+Owner "1" o-- "N" Vehicle : owns
+Vehicle "1" *-- "N" AccessPermission : has
+Barrier "1" *-- "N" AccessPermission : controls
+Barrier "1" o-- "N" Camera : equipped with
+AccessPermission "1" *-- "N" AccessLog : generates
+Operator ..> AccessLog : manages
+
+@enduml
