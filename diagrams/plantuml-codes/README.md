@@ -11,7 +11,6 @@
 | sd2-grant-permission.puml | Sequence Diagram 2 |
 | sd3-vehicle-entry.puml | Sequence Diagram 3 |
 | component.puml | Component Diagram |
-| erd-chen.puml | ERD — Chen Notation |
 
 ## نحوه استفاده
 این کدها را در plantuml.com وارد کرده ام
