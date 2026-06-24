@@ -1,1 +1,108 @@
+@startuml
+skinparam backgroundColor #FAFAFA
+skinparam fontSize 13
+skinparam component {
+  BackgroundColor #EAF4FB
+  BorderColor #2980B9
+  FontSize 13
+}
+skinparam database {
+  BackgroundColor #FEF9E7
+  BorderColor #D97706
+}
+skinparam node {
+  BackgroundColor #F0FFF4
+  BorderColor #16A34A
+}
 
+title Component Diagram — Vehicle Access Control System
+
+node "Client (Browser)" #EAF4FB {
+  [Dashboard UI] as UI_DASH
+  [Vehicle Management UI] as UI_VEH
+  [Barrier Management UI] as UI_BAR
+  [Permission Management UI] as UI_PERM
+  [Access Control UI] as UI_SIM
+  [Log & Report UI] as UI_LOG
+}
+
+node "Application Server (Flask / JS)" #FEF9E7 {
+
+  package "Presentation Layer" {
+    [Router / Controller] as CTRL
+  }
+
+  package "Business Logic Layer" {
+    [VehicleService] as SVC_VEH
+    [BarrierService] as SVC_BAR
+    [AccessPermissionService] as SVC_PERM
+    [AccessControlEngine] as ACE
+    [ReportService] as SVC_REP
+    [AuthService] as SVC_AUTH
+  }
+
+  package "Data Access Layer" {
+    [VehicleRepository] as REPO_VEH
+    [BarrierRepository] as REPO_BAR
+    [PermissionRepository] as REPO_PERM
+    [LogRepository] as REPO_LOG
+    [CameraRepository] as REPO_CAM
+    [OperatorRepository] as REPO_OP
+  }
+}
+
+node "Data Storage" #F0FFF4 {
+  database "SQLite Database" as DB {
+    [owner]
+    [vehicle]
+    [barrier]
+    [camera]
+    [access_permission]
+    [access_log]
+    [operator]
+  }
+}
+
+node "Physical Hardware" #FDE8E8 {
+  [Plate Reader Camera] as HW_CAM
+  [Barrier Motor Controller] as HW_BAR
+}
+
+' Client → Controller
+UI_DASH --> CTRL
+UI_VEH --> CTRL
+UI_BAR --> CTRL
+UI_PERM --> CTRL
+UI_SIM --> CTRL
+UI_LOG --> CTRL
+
+' Controller → Services
+CTRL --> SVC_VEH
+CTRL --> SVC_BAR
+CTRL --> SVC_PERM
+CTRL --> ACE
+CTRL --> SVC_REP
+CTRL --> SVC_AUTH
+
+' Services → Repositories
+SVC_VEH --> REPO_VEH
+SVC_BAR --> REPO_BAR
+SVC_PERM --> REPO_PERM
+ACE --> REPO_VEH
+ACE --> REPO_PERM
+ACE --> REPO_LOG
+SVC_REP --> REPO_LOG
+
+' Repositories → DB
+REPO_VEH --> DB
+REPO_BAR --> DB
+REPO_PERM --> DB
+REPO_LOG --> DB
+REPO_CAM --> DB
+REPO_OP --> DB
+
+' Hardware
+HW_CAM --> ACE : plate image
+ACE --> HW_BAR : open/close command
+
+@enduml
