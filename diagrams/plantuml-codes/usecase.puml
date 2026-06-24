@@ -1,1 +1,106 @@
+@startuml
+skinparam backgroundColor #FAFAFA
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #EAF4FB
+  BorderColor #2980B9
+  FontSize 13
+}
+skinparam actor {
+  BackgroundColor #1A3A5C
+  FontColor white
+}
 
+title Use Case Diagram — Vehicle Access Control System
+
+left to right direction
+
+actor "Admin" as ADM
+actor "Security Guard" as GRD
+actor "Vehicle / Driver" as DRV
+actor "Barrier / Camera" as CAM
+
+rectangle "Vehicle Access Control System" {
+
+  package "Vehicle Management" {
+    usecase "Register Vehicle" as UC1
+    usecase "Edit Vehicle Info" as UC2
+    usecase "Deactivate Vehicle" as UC3
+    usecase "Register Owner" as UC4
+    usecase "View Vehicle List" as UC5
+  }
+
+  package "Barrier Management" {
+    usecase "Register Barrier" as UC6
+    usecase "Edit Barrier Info" as UC7
+    usecase "Deactivate Barrier" as UC8
+    usecase "Assign Camera to Barrier" as UC9
+    usecase "View Barrier List" as UC10
+  }
+
+  package "Access Permission" {
+    usecase "Grant Access Permission" as UC11
+    usecase "Set Time Range" as UC12
+    usecase "Set Access Direction" as UC13
+    usecase "Revoke Permission" as UC14
+    usecase "View Permissions" as UC15
+  }
+
+  package "Access Control (Core)" {
+    usecase "Detect Plate Number" as UC16
+    usecase "Check Permission" as UC17
+    usecase "Open / Close Barrier" as UC18
+    usecase "Log Entry / Exit Event" as UC19
+    usecase "Deny Unauthorized Vehicle" as UC20
+  }
+
+  package "Reports" {
+    usecase "View Access Logs" as UC21
+    usecase "Filter Logs" as UC22
+    usecase "Export Report" as UC23
+  }
+
+  package "Authentication" {
+    usecase "Login to System" as UC24
+    usecase "Manage Operators" as UC25
+  }
+}
+
+ADM --> UC1
+ADM --> UC2
+ADM --> UC3
+ADM --> UC4
+ADM --> UC5
+ADM --> UC6
+ADM --> UC7
+ADM --> UC8
+ADM --> UC9
+ADM --> UC10
+ADM --> UC11
+ADM --> UC14
+ADM --> UC15
+ADM --> UC21
+ADM --> UC22
+ADM --> UC23
+ADM --> UC24
+ADM --> UC25
+
+GRD --> UC21
+GRD --> UC22
+GRD --> UC24
+GRD --> UC18
+
+DRV --> UC16
+
+CAM --> UC16
+
+UC16 ..> UC17 : <<include>>
+UC17 ..> UC18 : <<include>>
+UC17 ..> UC19 : <<include>>
+UC17 ..> UC20 : <<extend>>
+UC11 ..> UC12 : <<include>>
+UC11 ..> UC13 : <<include>>
+UC21 ..> UC22 : <<extend>>
+UC21 ..> UC23 : <<extend>>
+
+@enduml
