@@ -21,7 +21,23 @@
 
 در این سازمان تعدادی راهبند وجود دارد که هر راهبند به یک یا چند دوربین پلاک‌خوان مجهز است. هنگامی که خودرویی به راهبند نزدیک می‌شود، دوربین پلاک‌خوان به‌صورت خودکار شماره پلاک خودرو را تشخیص داده و به موتور کنترل دسترسی ارسال می‌کند. سیستم پلاک دریافتی را با پایگاه داده تطبیق می‌دهد. در صورت وجود مجوز معتبر راهبند باز شده و رویداد با وضعیت GRANTED ثبت می‌گردد. در غیر این صورت راهبند بسته می‌ماند و رویداد با وضعیت DENIED ثبت می‌شود.
 
+
+
 ---
+|## 💻 نمونه نرم‌افزار
+
+🔗 **[اینجا کلیک کنید — نمونه نرم‌افزار آنلاین](https://khadijerokni.github.io/vehicle-access-control-system/software/VACS.html)**
+
+فایل `software/VACS.html` را در مرورگر باز کنید.
+هیچ نصبی لازم نیست.
+
+| نقش | Username | Password |
+|-----|----------|----------|
+| Admin | admin | admin123 |
+| Guard | guard1 | guard123 |
+
+---
+
 
 ## 🎯 زیرسیستم‌ها
 
@@ -64,19 +80,6 @@
 | ERD — Chen Notation | diagrams/erd/ |
 | Component Diagram | diagrams/component/ |
 | Product Backlog | diagrams/backlog/ |
-
----
-|## 💻 نمونه نرم‌افزار
-
-🔗 **[اینجا کلیک کنید — نمونه نرم‌افزار آنلاین](https://khadijerokni.github.io/vehicle-access-control-system/software/VACS.html)**
-
-فایل `software/VACS.html` را در مرورگر باز کنید.
-هیچ نصبی لازم نیست.
-
-| نقش | Username | Password |
-|-----|----------|----------|
-| Admin | admin | admin123 |
-| Guard | guard1 | guard123 |
 
 ---
 
