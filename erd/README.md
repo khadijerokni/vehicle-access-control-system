@@ -1,27 +1,41 @@
-# Product Backlog
+# ERD — Entity Relationship Diagram
 
-## توضیح
-جدول Product Backlog شامل ۲۴ User Story است که
-تمام نیازمندیهای سیستم را پوشش می‌دهد.
+سبک: Chen Notation
 
-## دسته‌بندی
+## نمادها
 
-| دسته | تعداد | شماره‌ها |
-|------|-------|---------|
-| Vehicle | 5 | US-01 تا US-05 |
-| Barrier | 5 | US-06 تا US-10 |
-| Access Permission | 5 | US-11 تا US-15 |
-| Core | 4 | US-16 تا US-19 |
-| Reports | 3 | US-20 تا US-22 |
-| Authentication | 2 | US-23 تا US-24 |
+| نماد | معنی |
+|------|------|
+| مستطیل | موجودیت Entity |
+| بیضی | صفت Attribute |
+| بیضی با خط زیر | کلید اصلی PK |
+| لوزی | رابطه Relationship |
+| 1 و N | ضریب ارتباط Cardinality |
 
-## اولویت‌بندی
+## موجودیت‌ها
 
-| اولویت | تعداد |
-|--------|-------|
-| HIGH | 16 |
-| MED | 7 |
-| LOW | 1 |
+| موجودیت | کلید اصلی | صفات مهم |
+|---------|-----------|---------|
+| OWNER | owner_id | first_name, last_name, national_id, department |
+| VEHICLE | vehicle_id | plate_number, brand, model, color, vehicle_type |
+| BARRIER | barrier_id | barrier_name, location, direction, status |
+| CAMERA | camera_id | ip_address, model, status |
+| ACCESS_PERMISSION | permission_id | access_type, valid_from, valid_until, time_from, time_until |
+| ACCESS_LOG | log_id | event_type, event_datetime, detected_plate, access_status |
+| OPERATOR | operator_id | username, role |
 
-## فایل
-- `backlog_hq.png` — جدول Product Backlog
+## روابط
+
+| رابطه | موجودیت‌ها | نوع |
+|-------|-----------|-----|
+| owns | OWNER — VEHICLE | 1:N |
+| has_permission | VEHICLE — ACCESS_PERMISSION | 1:N |
+| controls | BARRIER — ACCESS_PERMISSION | 1:N |
+| has_camera | BARRIER — CAMERA | 1:N |
+| logs | ACCESS_PERMISSION — ACCESS_LOG | 1:N |
+| manages | OPERATOR — ACCESS_LOG | 1:N |
+
+## فایل‌ها
+- `erd_chen.png` — تصویر ERD
+- `erd_chen.drawio` — فایل قابل ویرایش
+- 
