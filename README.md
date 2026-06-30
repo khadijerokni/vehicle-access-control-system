@@ -91,6 +91,8 @@
 | Data Access Layer | Repositories |
 | Database | SQLite |
 
+<img src="Image/SystemArchitecture.png" alt="System Architecture" width="900">
+
 ---
 
 ## 📊 نمودارها
