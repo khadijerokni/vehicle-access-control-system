@@ -1,5 +1,5 @@
 # معماری نرم‌افزار | Software Architecture
-<img src="Image/SystemArchitecture.png" alt="System Architecture" width="900">
+![System Architecture](../Image/SystemArchitecture.png)
 
 ## معماری انتخابی: 3-Tier Architecture + MVC
 
