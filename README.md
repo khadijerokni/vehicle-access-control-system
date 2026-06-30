@@ -52,6 +52,18 @@
 | Admin | admin | admin123 |
 | Guard | guard1 | guard123 |
 
+<h2 align="center">Login Page</h2>
+
+<p align="center">
+  <img src="Image/Login_Page.jpg" alt="Login Page" width="800">
+</p>
+
+<h2 align="center">Dashboard</h2>
+
+<p align="center">
+  <img src="Image/VACS_Dashboard.png" alt="VACS Dashboard" width="800">
+</p>
+
 ---
 
 
