@@ -97,15 +97,95 @@
 
 - [x] شرح سیستم
 - [x] نمودار Use Case
+<p align="center">
+<img src="diagrams/usecase/usecase_diagram.png" width="900">
+</p>
+
 - [x] جدول Product Backlog — 24 User Story
+<p align="center">
+<img src="BACKLOG/backlog_hq.png" width="900">
+</p>
+
+<p align="center">
+<b>Figure 1.</b> Product Backlog
+</p>
+
 - [x] نمودار کلاس تحلیل
+<p align="center">
+<img src="diagrams/class/class_analysis.png" width="900">
+</p>
+
+<p align="center">
+<b>Figure 5.</b> Class Analysis Diagram
+</p>
+
 - [x] DFD سطح ۰
+<p align="center">
+<img src="dfd/dfd_level0-1.png" width="900">
+</p>
+
+<p align="center">
+<b>Figure 2.</b> Data Flow Diagram (Level 0)
+</p>
+
 - [x] DFD سطح ۱
+<p align="center">
+<img src="dfd/dfd_level1-1.png" width="900">
+</p>
+
+<p align="center">
+<b>Figure 3.</b> Data Flow Diagram (Level 1)
+</p>
+
 - [x] نمودار توالی ۱ — ثبت خودرو
+<p align="center">
+<img src="diagrams/sequence/sd1_register_vehicle.png" width="900">
+</p>
+
+<p align="center">
+<b>Figure 8.</b> Sequence Diagram – Register Vehicle
+</p>
+
 - [x] نمودار توالی ۲ — اعطای مجوز
+<p align="center">
+<img src="diagrams/sequence/sd2_grant_permission.png" width="900">
+</p>
+
+<p align="center">
+<b>Figure 9.</b> Sequence Diagram – Grant Permission
+</p>
+
 - [x] نمودار توالی ۳ — ورود خودرو
+<p align="center">
+<img src="diagrams/sequence/sd3_vehicle_entry.png" width="900">
+</p>
+
+<p align="center">
+<b>Figure 10.</b> Sequence Diagram – Vehicle Entry
+</p>
+
 - [x] نمودار ERD
+<p align="center">
+<img src="erd/ERD(chen).drawio.png" width="900">
+</p>
+
 - [x] معماری نرم‌افزار
 - [x] نمودار کلاس طراحی
+<p align="center">
+<img src="diagrams/class/class_design.png" width="900">
+</p>
+
+<p align="center">
+<b>Figure 6.</b> Class Design Diagram
+</p>
+
 - [x] نمودار کامپوننت
+<p align="center">
+<img src="diagrams/component/component _diagram.png" width="900">
+</p>
+
+<p align="center">
+<b>Figure 7.</b> Component Diagram
+</p>
+
 - [x] نمونه نرم‌افزار
