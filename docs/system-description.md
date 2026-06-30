@@ -1,4 +1,5 @@
 # شرح سیستم | System Description
+![VACS Architecture](../Image/vacs_architecture.png)
 
 **نام دانشجو:** خدیجه رکنی
 **شماره دانشجویی:** 40213343
